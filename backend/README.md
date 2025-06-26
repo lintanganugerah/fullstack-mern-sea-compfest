@@ -1,0 +1,1 @@
+Dibuat untuk memenuhi Seleksi Software Engineering Academy. Ini merupakan bagian backend. Stack yang digunakan adalah MERN
