@@ -1,10 +1,11 @@
 import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
-import { pino } from "pino";
-import { env } from "@/common/config/envConfig";
+import { getEnv } from "@/common/config/envConfig";
+import requestLogger from "@/common/middleware/requestLogger";
+import IndexRoute from "./api/index.routes";
+import errorHandlers from "./common/middleware/errorHandlers";
 
-const logger = pino({ name: "server start" });
 const app: Express = express();
 
 // Set the application to trust the reverse proxy
@@ -13,11 +14,16 @@ app.set("trust proxy", true);
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+app.use(cors({ origin: getEnv().CORS_ORIGIN, credentials: true }));
 app.use(helmet());
 
-app.get("/", (_,res) => {
-    res.status(200).send("Server Running!")
-})
+app.use(requestLogger);
+app.use(IndexRoute);
+
+app.get("/", (_, res) => {
+  res.status(200).send("Server Running!");
+});
+
+app.use(...errorHandlers());
 
 export { app };

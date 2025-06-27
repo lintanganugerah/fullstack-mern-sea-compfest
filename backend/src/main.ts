@@ -1,18 +1,23 @@
-import { env } from "@/common/config/envConfig";
+import { getEnv } from "@/common/config/envConfig";
 import { app } from "@/server";
+import { connectDB } from "@/common/database/mongoConfig";
+import { serverLogger } from "@/common/config/loggerConfig";
 
-const server = app.listen(env.PORT, () => {
-	const { NODE_ENV, HOST, PORT } = env;
-	console.log(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`);
+const server = app.listen(getEnv().PORT, async () => {
+  const { NODE_ENV, HOST, PORT } = getEnv();
+  await connectDB();
+  serverLogger.info(
+    `Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`
+  );
 });
 
 const onCloseSignal = () => {
-	console.log("sigint received, shutting down");
-	server.close(() => {
-		console.log("server closed");
-		process.exit();
-	});
-	setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
+  serverLogger.info("sigint received, shutting down");
+  server.close(() => {
+    serverLogger.info("server closed");
+    process.exit();
+  });
+  setTimeout(() => process.exit(1), 30000).unref(); // Force shutdown after 30s
 };
 
 process.on("SIGINT", onCloseSignal);
