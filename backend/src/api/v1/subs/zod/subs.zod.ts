@@ -22,3 +22,7 @@ export const subscriptionSchemaZod = z.object({
     .min(1, "Select at least one delivery day"),
   allergies: z.string().optional(),
 });
+
+export const CreateSubscriptionSchemaZod = z.object({
+  body: subscriptionSchemaZod,
+});

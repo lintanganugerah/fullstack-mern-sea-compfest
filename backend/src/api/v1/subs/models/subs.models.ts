@@ -3,6 +3,7 @@ import { SubscriptionMongoDataType } from "../types/subs.types";
 
 export const SubscriptionSchemaMongo = new Schema(
   {
+    //TODO: Ubah name ini menjadi UserId agar konsisten dan ambil nama dari data userId
     name: { type: String, required: true },
     phoneNumber: {
       type: String,
