@@ -3,10 +3,9 @@ import pinoHttp from "pino-http";
 
 const requestLogger = pinoHttp({
   logger: httpLogger,
-  customLogLevel: (res, err) => {
-    const status = res.statusCode ?? 500;
-    if (status >= 500 || err) return "error";
-    if (status >= 400) return "warn";
+  customLogLevel: (_req, res, err) => {
+    if (err || res.statusCode >= 500) return "error";
+    if (res.statusCode >= 400) return "warn";
     return "info";
   },
   customSuccessMessage: (res) => `HTTP ${res.statusCode} - Success`,

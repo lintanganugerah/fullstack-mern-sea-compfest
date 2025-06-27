@@ -1,11 +1,10 @@
 import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
-import { pino } from "pino";
 import { getEnv } from "@/common/config/envConfig";
 import requestLogger from "@/common/middleware/requestLogger";
-import { pinoHttp } from "pino-http";
-import { httpLogger } from "@/common/config/loggerConfig";
+import IndexRoute from "./api/index.routes";
+import errorHandlers from "./common/middleware/errorHandlers";
 
 const app: Express = express();
 
@@ -19,9 +18,12 @@ app.use(cors({ origin: getEnv().CORS_ORIGIN, credentials: true }));
 app.use(helmet());
 
 app.use(requestLogger);
+app.use(IndexRoute);
 
 app.get("/", (_, res) => {
   res.status(200).send("Server Running!");
 });
+
+app.use(...errorHandlers());
 
 export { app };

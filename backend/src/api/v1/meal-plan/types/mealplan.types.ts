@@ -1,0 +1,20 @@
+export interface MealPlan {
+  name: string;
+  price: number;
+  description: string;
+  image?: string;
+}
+
+export interface MealPlanParams {
+  id: string;
+}
+
+export interface IMealPlanRepository {
+  getAll(): Promise<MealPlan[]>;
+  getById(id: string): Promise<MealPlan | null>;
+  create(input: MealPlan): Promise<MealPlan>;
+  update(id: string, input: UpdateMealRequest): Promise<MealPlan | null>;
+  delete(id: string): Promise<Boolean>;
+}
+
+export type UpdateMealRequest = Partial<MealPlan>;

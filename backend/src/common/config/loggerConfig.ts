@@ -12,16 +12,15 @@ if (!fs.existsSync(logDirectory)) {
 
 const createDailyStream = (type: string) =>
   createStream(
-    (time, index) => {
-      if (!time) return `${type}-log.log`;
-      const date = new Date(time);
+    () => {
+      const date = new Date();
       const day = date.toISOString().split("T")[0];
       return `${type}-${day}.log`;
     },
     {
       interval: "1d",
       path: logDirectory,
-      maxFiles: 10,
+      maxFiles: 14,
       compress: "gzip",
     }
   );
