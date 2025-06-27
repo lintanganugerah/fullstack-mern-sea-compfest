@@ -1,9 +1,16 @@
+import { InferSchemaType, Schema } from "mongoose";
+import { MealPlanSchemaMongo } from "../models/mealplan.models";
+
 export interface MealPlan {
   name: string;
   price: number;
   description: string;
   image?: string;
 }
+
+export type MealPlanMongoData = InferSchemaType<typeof MealPlanSchemaMongo> & {
+  _id: Schema.Types.ObjectId
+};
 
 export interface MealPlanParams {
   id: string;

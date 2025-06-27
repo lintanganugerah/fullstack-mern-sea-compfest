@@ -108,7 +108,7 @@ mealRegistry.registerPath({
   path: "/mealplan/{id}",
   tags: ["MealPlan"],
   responses: createApiResponse(
-    ServiceResponseSchema(MealPlanSchema.array()),
+    ServiceResponseSchema(MealPlanSchema),
     "Success"
   ),
 });
