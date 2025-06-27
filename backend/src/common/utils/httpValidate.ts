@@ -5,25 +5,37 @@ import type { ZodError, ZodSchema } from "zod";
 import { ServiceResponse } from "./serviceResponse";
 
 export const validateRequest =
-  (schema: ZodSchema) =>
+  (schema: ZodSchema<any>) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await schema.parseAsync({
-        body: req.body,
-        query: req.query,
-        params: req.params,
-      });
+      await schema.parseAsync(req.body);
       next();
-    } catch (err) {
-      const errorMessage = `Invalid input: ${(err as ZodError).errors
-        .map((e) => e.message)
-        .join(", ")}`;
-      const statusCode = StatusCodes.BAD_REQUEST;
+    } catch (err: any) {
+      if (err.name === "ZodError") {
+        const zodError = err as ZodError;
+
+        const detailedErrors = zodError.errors.map((e) => {
+          return `${e.path.join(".")}: ${e.message}`;
+        });
+
+        const errorMessage = `Invalid input:\n${detailedErrors.join("\n")}`;
+        const statusCode = StatusCodes.BAD_REQUEST;
+
+        const serviceResponse = ServiceResponse.failure(
+          errorMessage,
+          null,
+          statusCode
+        );
+        return res.status(statusCode).json(serviceResponse);
+      }
+
+      // fallback if error is not from Zod
+      const statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
       const serviceResponse = ServiceResponse.failure(
-        errorMessage,
+        "Internal server error during validation",
         null,
         statusCode
       );
-      res.status(serviceResponse.statusCode).send(serviceResponse);
+      return res.status(statusCode).json(serviceResponse);
     }
   };
