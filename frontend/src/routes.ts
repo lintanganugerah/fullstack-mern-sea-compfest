@@ -1,3 +1,4 @@
+import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 export const createRouter = () =>
@@ -46,31 +47,53 @@ export const createRouter = () =>
           },
         },
         {
-          path: "subscription",
           lazy: async () => {
-            const { default: SubscriptionPage } = await import(
-              "modules/user/pages/SubscriptionPage"
-            );
-            return { Component: SubscriptionPage };
+            const { default: RequireAuth } = await import("guard/RequireAuth");
+            return {
+              element: React.createElement(RequireAuth),
+            };
           },
+          children: [
+            {
+              path: "subscription",
+              lazy: async () => {
+                const { default: SubscriptionPage } = await import(
+                  "modules/user/pages/SubscriptionPage"
+                );
+                return { Component: SubscriptionPage };
+              },
+            },
+          ],
         },
         {
-          path: "login",
           lazy: async () => {
-            const { default: LoginPage } = await import(
-              "modules/auth/pages/LoginPage"
+            const { default: RequireNoAuth } = await import(
+              "guard/RequireNoAuth"
             );
-            return { Component: LoginPage };
+            return {
+              element: React.createElement(RequireNoAuth),
+            };
           },
-        },
-        {
-          path: "register",
-          lazy: async () => {
-            const { default: RegisterPage } = await import(
-              "modules/auth/pages/RegisterPage"
-            );
-            return { Component: RegisterPage };
-          },
+          children: [
+            {
+              path: "login",
+              lazy: async () => {
+                const { default: LoginPage } = await import(
+                  "modules/auth/pages/LoginPage"
+                );
+                return { Component: LoginPage };
+              },
+            },
+            {
+              path: "register",
+              lazy: async () => {
+                const { default: RegisterPage } = await import(
+                  "modules/auth/pages/RegisterPage"
+                );
+                return { Component: RegisterPage };
+              },
+            },
+          ],
         },
       ],
     },

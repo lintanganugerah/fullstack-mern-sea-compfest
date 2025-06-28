@@ -138,3 +138,15 @@ export const refreshCsrf: RequestHandler = async (
     })
   );
 };
+
+// Pengecekan apakah JWT masih valid sudah dilakukan melalui middleware requireAuth
+// Jika sudah masuk ke controller artinya valid tinggal kita beri response
+export const verifyAuth: RequestHandler = (_: Request, res: Response) => {
+  respond(res, ServiceResponse.success("valid"));
+};
+
+// Pengecekan apakah JWT masih valid sudah dilakukan melalui middleware requireAuth
+// Jika sudah masuk ke controller artinya valid tinggal kita beri response
+export const verifyAdmin: RequestHandler = (_: Request, res: Response) => {
+  respond(res, ServiceResponse.success("valid"));
+};

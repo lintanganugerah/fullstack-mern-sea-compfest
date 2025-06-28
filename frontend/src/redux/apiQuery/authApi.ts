@@ -19,6 +19,7 @@ import type {
   RegisterFormData,
   RegisterResponse,
 } from "modules/auth/types/registerTypes";
+import type { verifyAuthResponse } from "modules/auth/types/authTypes";
 
 export const authAPI = createApi({
   reducerPath: "AuthAPI",
@@ -27,7 +28,7 @@ export const authAPI = createApi({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginFormData>({
       query: (credentials) => ({
-        url: API_QUERY_PATH.login,
+        url: API_QUERY_PATH.auth.login,
         method: "POST",
         body: credentials,
       }),
@@ -51,15 +52,14 @@ export const authAPI = createApi({
       },
     }),
     logout: builder.mutation<BaseApiResponseTypes, void>({
-      query: (credentials) => {
+      query: () => {
         const token = localStorage.getItem("persist:root")
           ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")!).auth)
               .token
           : null;
         return {
-          url: API_QUERY_PATH.logout,
+          url: API_QUERY_PATH.auth.logout,
           method: "POST",
-          body: credentials,
           headers: {
             Authorization: token ? `Bearer ${token}` : "",
           },
@@ -79,7 +79,7 @@ export const authAPI = createApi({
     }),
     register: builder.mutation<RegisterResponse, RegisterFormData>({
       query: (userData) => ({
-        url: API_QUERY_PATH.register,
+        url: API_QUERY_PATH.auth.register,
         method: "POST",
         body: userData,
       }),
@@ -90,8 +90,55 @@ export const authAPI = createApi({
         }
       },
     }),
+    verifyAuth: builder.query<verifyAuthResponse, void>({
+      query: () => {
+        const token = localStorage.getItem("persist:root")
+          ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")!).auth)
+              .token
+          : null;
+        return {
+          url: API_QUERY_PATH.auth.verifyAuth,
+          method: "POST",
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        };
+      },
+      async onQueryStarted(_, { queryFulfilled }) {
+        const { data } = await queryFulfilled;
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+      },
+    }),
+    verifyAdmin: builder.query<verifyAuthResponse, void>({
+      query: () => {
+        const token = localStorage.getItem("persist:root")
+          ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")!).auth)
+              .token
+          : null;
+        return {
+          url: API_QUERY_PATH.auth.verifyAdmin,
+          method: "POST",
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        };
+      },
+      async onQueryStarted(_, { queryFulfilled }) {
+        const { data } = await queryFulfilled;
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+      },
+    }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation } =
-  authAPI;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useRegisterMutation,
+  useLazyVerifyAdminQuery,
+  useLazyVerifyAuthQuery,
+} = authAPI;

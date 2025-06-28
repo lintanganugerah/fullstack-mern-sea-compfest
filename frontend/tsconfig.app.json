@@ -14,6 +14,7 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": ["vite/client"], 
 
     /* Linting */
     "strict": true,
@@ -33,8 +34,9 @@
       "@hooks/*" : ["/hooks/*"],
       "@redux/*" : ["/redux/*"],
       "@types/*" : ["/types/*"],
-      "@components/*" : ["/components/*"]
+      "@components/*" : ["/components/*"],
+      "@guard/*" : ["/guard/*"]
 		}
   },
-  "include": ["src"]
+  "include": ["src", "vite-env.d.ts"]
 }

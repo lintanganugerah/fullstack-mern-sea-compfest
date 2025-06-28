@@ -1,5 +1,9 @@
 export const API_QUERY_PATH = {
-  login: "/auth/login",
-  logout: "/auth/logout",
-  register: "/auth/register",
+  auth: {
+    login: "/auth/login",
+    logout: "/auth/logout",
+    register: "/auth/register",
+    verifyAuth: "/auth/verify",
+    verifyAdmin: "/auth/verify/admin",
+  },
 };

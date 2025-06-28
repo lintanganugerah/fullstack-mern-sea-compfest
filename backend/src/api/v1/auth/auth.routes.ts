@@ -129,3 +129,34 @@ authRegistry.registerPath({
 });
 
 authRouter.post("/logout", requireAuth, AuthController.logout);
+
+// POST /api/v1/auth/verify
+authRegistry.registerPath({
+  method: "post",
+  path: "/verify",
+  tags: ["Auth"],
+  responses: createApiResponse(
+    ServiceResponseSchema(CsrfResponseSchemaZod),
+    "Valid"
+  ),
+});
+
+authRouter.post("/verify", requireAuth, AuthController.verifyAuth);
+
+// POST /api/v1/auth/verify/admin
+authRegistry.registerPath({
+  method: "post",
+  path: "/verify/admin",
+  tags: ["Auth"],
+  responses: createApiResponse(
+    ServiceResponseSchema(CsrfResponseSchemaZod),
+    "Valid"
+  ),
+});
+
+authRouter.post(
+  "/verify/admin",
+  requireAuth,
+  requireAdmin,
+  AuthController.verifyAdmin
+);
