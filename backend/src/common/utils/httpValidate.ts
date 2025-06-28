@@ -5,7 +5,7 @@ import type { ZodError, ZodSchema } from "zod";
 import { ServiceResponse } from "./serviceResponse";
 
 export const validateRequest =
-  (schema: ZodSchema<any>) =>
+  (schema: ZodSchema) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.parseAsync(req.body);
@@ -26,7 +26,8 @@ export const validateRequest =
           null,
           statusCode
         );
-        return res.status(statusCode).json(serviceResponse);
+        res.status(statusCode).json(serviceResponse);
+        return;
       }
 
       // fallback if error is not from Zod
@@ -36,6 +37,6 @@ export const validateRequest =
         null,
         statusCode
       );
-      return res.status(statusCode).json(serviceResponse);
+      res.status(statusCode).json(serviceResponse);
     }
   };

@@ -65,7 +65,7 @@ subsRegistry.registerPath({
   },
   responses: createApiResponse(
     ServiceResponseSchema(CreateSubscriptionSchemaZod),
-    "Meal created"
+    "Subscription created"
   ),
 });
 subsRouter.post(
