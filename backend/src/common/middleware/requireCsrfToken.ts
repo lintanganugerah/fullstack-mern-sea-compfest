@@ -19,10 +19,11 @@ export function requireCsrfToken(
     !signedToken ||
     !verifyCsrfToken(rawToken, signedToken)
   ) {
-    return respond(
+    respond(
       res,
       ServiceResponse.failure("Invalid CSRF token", null, 403)
     );
+    return 
   }
 
   next();

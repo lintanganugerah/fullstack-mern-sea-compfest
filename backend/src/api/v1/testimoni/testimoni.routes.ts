@@ -14,6 +14,8 @@ import {
   CreateTestimoniSchemaZod,
   TestimoniSchemaZod,
 } from "./zod/testimoni.zod";
+import { requireAuth } from "@/common/middleware/requireAuth";
+import { requireCsrfToken } from "@/common/middleware/requireCsrfToken";
 
 extendZodWithOpenApi(z);
 
@@ -71,6 +73,8 @@ testimoniRegistry.registerPath({
 });
 testimoniRouter.post(
   "/",
+  requireAuth,
+  requireCsrfToken,
   validateRequest(CreateTestimoniSchemaZod),
   TestimoniController.createTestimoni
 );

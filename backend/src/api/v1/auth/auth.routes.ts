@@ -18,6 +18,7 @@ import { ServiceResponseSchema } from "@/common/utils/serviceResponse";
 import { validateRequest } from "@/common/utils/httpValidate";
 import { requireAdmin } from "@/common/middleware/requireAdmin";
 import { requireAuth } from "@/common/middleware/requireAuth";
+import { requireCsrfToken } from "@/common/middleware/requireCsrfToken";
 
 extendZodWithOpenApi(z);
 
@@ -76,6 +77,7 @@ authRouter.post(
   "/register/admin",
   requireAuth,
   requireAdmin,
+  requireCsrfToken,
   validateRequest(RegisterSchemaZod),
   AuthController.createAdmin
 );
