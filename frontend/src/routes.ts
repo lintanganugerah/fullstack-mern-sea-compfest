@@ -1,12 +1,13 @@
-import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import Layout from "components/layout/Layout";
 
 export const createRouter = () =>
   createBrowserRouter([
     {
       path: "/",
-      element: React.createElement(Layout),
+      lazy: async () => {
+        const { default: Layout } = await import("components/layout/Layout");
+        return { Component: Layout };
+      },
       children: [
         {
           index: true,
@@ -51,6 +52,24 @@ export const createRouter = () =>
               "modules/user/pages/SubscriptionPage"
             );
             return { Component: SubscriptionPage };
+          },
+        },
+        {
+          path: "login",
+          lazy: async () => {
+            const { default: LoginPage } = await import(
+              "modules/auth/pages/LoginPage"
+            );
+            return { Component: LoginPage };
+          },
+        },
+        {
+          path: "register",
+          lazy: async () => {
+            const { default: RegisterPage } = await import(
+              "modules/auth/pages/RegisterPage"
+            );
+            return { Component: RegisterPage };
           },
         },
       ],
