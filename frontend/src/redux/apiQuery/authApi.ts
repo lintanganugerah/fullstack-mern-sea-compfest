@@ -15,6 +15,10 @@ import { removeUserState, saveUserState } from "redux/slice/userSlice";
 import { jwtDecode } from "jwt-decode";
 import { API_QUERY_PATH } from "constant/ApiQueryPath";
 import type { BaseApiResponseTypes } from "types/BaseApiResponse";
+import type {
+  RegisterFormData,
+  RegisterResponse,
+} from "modules/auth/types/registerTypes";
 
 export const authAPI = createApi({
   reducerPath: "AuthAPI",
@@ -73,7 +77,21 @@ export const authAPI = createApi({
         dispatch(removeUserState());
       },
     }),
+    register: builder.mutation<RegisterResponse, RegisterFormData>({
+      query: (userData) => ({
+        url: API_QUERY_PATH.register,
+        method: "POST",
+        body: userData,
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        const { data } = await queryFulfilled;
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+      },
+    }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation } = authAPI;
+export const { useLoginMutation, useLogoutMutation, useRegisterMutation } =
+  authAPI;

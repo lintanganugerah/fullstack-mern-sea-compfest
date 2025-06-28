@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 import { registerSchemaZod } from "../zod/registerSchemaZod";
 import type { RegisterFormData } from "../types/registerTypes";
+import { useRegister } from "hooks/useRegister";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ const RegisterPage = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     const result = registerSchemaZod.safeParse(formData);
@@ -34,6 +34,8 @@ const RegisterPage = () => {
     return true;
   };
 
+  const { register, loading } = useRegister();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -42,7 +44,8 @@ const RegisterPage = () => {
       return;
     }
 
-    setIsSubmitting(true);
+    await register(formData);
+
     navigate("/login");
   };
 
@@ -139,9 +142,9 @@ const RegisterPage = () => {
           <button
             type="submit"
             className="w-full bg-primary text-white py-3 rounded hover:bg-primary/80"
-            disabled={isSubmitting}
+            disabled={loading}
           >
-            {isSubmitting ? "Creating Account..." : "Create Account"}
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
 
           <div className="mt-6 text-center text-sm text-gray-600">
