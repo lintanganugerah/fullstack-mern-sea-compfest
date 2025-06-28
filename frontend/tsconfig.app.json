@@ -26,15 +26,14 @@
     /* Absolute paths */
 		"baseUrl": "./src",
 		"paths": {
-			"@adminPages/*": ["/modules/admin/pages/*"],
-			"@adminComponents/*": ["/modules/admin/components/*"],
-			"@userPages/*": ["/modules/user/pages/*"],
-			"@userComponents/*": ["/modules/user/components/*"],
+			"@admin/*": ["/modules/admin/*"],
+			"@user/*": ["/modules/user/*"],
       "@assets/*" : ["/assets/*"],
       "@constant/*" : ["/constant/*"],
       "@hooks/*" : ["/hooks/*"],
       "@redux/*" : ["/redux/*"],
       "@types/*" : ["/types/*"],
+      "@components/*" : ["/components/*"]
 		}
   },
   "include": ["src"]
