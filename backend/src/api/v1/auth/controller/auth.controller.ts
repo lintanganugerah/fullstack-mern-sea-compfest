@@ -78,15 +78,24 @@ export const createAdmin: RequestHandler = async (
 
 export const login: RequestHandler = async (req: Request, res: Response) => {
   const result = await authService.loginUser(req.body);
-  if (!result.success) {
+  if (!result.success || !result.user) {
     respond(res, ServiceResponse.failure(result.message, null, 401));
     return;
   }
+
+  const rl = aliasName[result.user.role] || "";
 
   // Double Submit Token
   const csrfToken = generateRawCsrfToken();
   const signedToken = signCsrfToken(csrfToken);
   res.cookie(aliasName["csrf_token_signed"], signedToken, {
+    httpOnly: true,
+    secure: getEnv().isProduction,
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 15, // 15 menit
+  });
+
+  res.cookie(aliasName["role"], rl, {
     httpOnly: true,
     secure: getEnv().isProduction,
     sameSite: "lax",

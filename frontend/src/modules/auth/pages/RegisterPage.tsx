@@ -50,7 +50,9 @@ const RegisterPage = () => {
     <div className="min-h-screen py-12 flex items-center justify-center">
       <div className="max-w-md w-full mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Join ASA</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Join With Healthy Fams!
+          </h1>
           <p className="text-gray-600">
             Create your account and start your healthy journey
           </p>

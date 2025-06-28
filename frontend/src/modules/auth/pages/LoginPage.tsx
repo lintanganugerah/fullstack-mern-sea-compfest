@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 import { loginSchemaZod } from "../zod/loginSchemaZod";
 import type { LoginFormData } from "../types/loginTypes";
+import { useLogin } from "hooks/useLogin";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -13,7 +14,6 @@ export default function LoginPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     const result = loginSchemaZod.safeParse(formData);
@@ -32,6 +32,8 @@ export default function LoginPage() {
     return true;
   };
 
+  const { login, loading } = useLogin();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -40,7 +42,7 @@ export default function LoginPage() {
       return;
     }
 
-    setIsSubmitting(true);
+    await login(formData);
   };
 
   return (
@@ -117,10 +119,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={loading}
               className="w-full bg-primary hover:bg-primary/80 text-white font-semibold py-3 rounded transition"
             >
-              {isSubmitting ? "Signing In..." : "Sign In"}
+              {loading ? "Signing In..." : "Sign In"}
             </button>
           </form>
 

@@ -2,10 +2,9 @@ import { AuthMongoRepo } from "../repo/auth.mongo.repo";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Response } from "express";
-import { RegisterInput, LoginInput } from "../types/auth.types";
+import { RegisterInput, LoginInput, UserMongoData } from "../types/auth.types";
 import { getEnv } from "@/common/config/envConfig";
 import { aliasName } from "@/common/utils/aliasName";
-import crypto, { createHmac } from "crypto";
 
 export class AuthServices {
   constructor(private readonly repo: AuthMongoRepo) {}
@@ -27,7 +26,12 @@ export class AuthServices {
 
   async loginUser(
     input: LoginInput
-  ): Promise<{ success: boolean; message: string; token?: string }> {
+  ): Promise<{
+    success: boolean;
+    message: string;
+    token?: string;
+    user?: UserMongoData;
+  }> {
     const user = await this.repo.findByEmail(input.email);
     if (!user) return { success: false, message: "Invalid credentials" };
 
@@ -35,14 +39,19 @@ export class AuthServices {
     if (!valid) return { success: false, message: "Invalid credentials" };
 
     const token = jwt.sign(
-      { id: user._id, rl: aliasName[user.role] },
+      { id: user._id, fullName: user.fullName, rl: aliasName[user.role] },
       getEnv().JWT_SECRET,
       {
         expiresIn: "1d",
       }
     );
 
-    return { success: true, message: "Login Successful", token: token };
+    return {
+      success: true,
+      message: "Login Successful",
+      token: token,
+      user: user,
+    };
   }
 
   async logoutUser(res: Response) {
