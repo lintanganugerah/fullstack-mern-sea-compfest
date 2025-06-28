@@ -112,7 +112,8 @@ export const login: RequestHandler = async (req: Request, res: Response) => {
 };
 
 export const logout: RequestHandler = async (_: Request, res: Response) => {
-  res.clearCookie(aliasName["access_token"]);
+  res.clearCookie(aliasName["csrf_token_signed"]);
+  res.clearCookie(aliasName["role"]);
   respond(res, ServiceResponse.success("Logout success"));
 };
 

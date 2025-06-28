@@ -1,27 +1,26 @@
-import { useLoginMutation } from "redux/apiQuery/authApi";
+import { useLogoutMutation } from "redux/apiQuery/authApi";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import type { LoginFormData } from "modules/auth/types/loginTypes";
 import type { BaseApiResponseTypes } from "types/BaseApiResponse";
 
-export function useLogin() {
-  const [loginTrigger] = useLoginMutation();
+export function useLogout() {
+  const [logoutTrigger] = useLogoutMutation();
   const [loading, setLoading] = useState(false);
 
-  const login = (formData: LoginFormData) => {
+  const logout = () => {
     setLoading(true);
-    return loginTrigger(formData)
+    return logoutTrigger()
       .unwrap()
       .then(() => {
-        toast.success("Login success.");
+        toast.success("Logout success.");
       })
       .catch((err) => {
         const message =
           (err?.data as BaseApiResponseTypes)?.message ||
           err?.error ||
-          "Login failed. Please try again.";
+          "Logout failed. Please try agaout.";
         if (err?.statusCode >= 500) {
-          toast.error("Internal Server Error");
+          toast.error("internal Server Error");
         }
         toast.error(message);
       })
@@ -30,5 +29,5 @@ export function useLogin() {
       });
   };
 
-  return { login, loading };
+  return { logout, loading };
 }

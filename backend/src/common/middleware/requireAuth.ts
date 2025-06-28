@@ -21,8 +21,8 @@ export const requireAuth = async (
       respond(
         res,
         ServiceResponse.failure(
-          "Unauthorized: Token not found or invalid format",
-          null,
+          "Unauthorized: You are not logged in. Please login again",
+          undefined,
           StatusCodes.UNAUTHORIZED
         )
       );
@@ -34,8 +34,8 @@ export const requireAuth = async (
       respond(
         res,
         ServiceResponse.failure(
-          "Unauthorized: Token Not Found",
-          null,
+          "Unauthorized: You are not logged in",
+          undefined,
           StatusCodes.UNAUTHORIZED
         )
       );
@@ -44,19 +44,6 @@ export const requireAuth = async (
 
     const decoded = jwt.verify(token, getEnv().JWT_SECRET) as JwtPayload;
 
-    const user = await authService.checkUserExist(decoded.userId);
-    if (!user) {
-      respond(
-        res,
-        ServiceResponse.failure(
-          "Unauthorized: User tidak ditemukan",
-          null,
-          StatusCodes.UNAUTHORIZED
-        )
-      );
-      return;
-    }
-
     req.user = decoded;
     next();
   } catch (err) {
@@ -64,7 +51,7 @@ export const requireAuth = async (
       res,
       ServiceResponse.failure(
         "Unauthorized: Token tidak valid",
-        null,
+        undefined,
         StatusCodes.UNAUTHORIZED
       )
     );

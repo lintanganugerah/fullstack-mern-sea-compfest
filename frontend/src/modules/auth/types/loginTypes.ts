@@ -32,5 +32,5 @@ export type UserState = Partial<User> & {
 };
 
 export type LoginResponse = BaseApiResponseTypes & {
-  requestObject: JwtTokenState & CsrfTokenState;
+  responseObject: JwtTokenState & CsrfTokenState;
 };

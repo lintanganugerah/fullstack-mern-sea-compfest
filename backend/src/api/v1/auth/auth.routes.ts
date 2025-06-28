@@ -116,3 +116,16 @@ authRegistry.registerPath({
 });
 
 authRouter.get("/csf", requireAuth, AuthController.refreshCsrf);
+
+// POST /api/v1/auth/csf
+authRegistry.registerPath({
+  method: "post",
+  path: "/logout",
+  tags: ["Auth"],
+  responses: createApiResponse(
+    ServiceResponseSchema(CsrfResponseSchemaZod),
+    "Logout Success"
+  ),
+});
+
+authRouter.post("/logout", requireAuth, AuthController.logout);

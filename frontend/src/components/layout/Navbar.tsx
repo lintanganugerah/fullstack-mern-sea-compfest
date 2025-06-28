@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User, LogOut } from "lucide-react";
+import { useStorage } from "hooks/useStorage";
+import { useLogout } from "hooks/useLogout";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState({
-    fullName: "",
-  });
+  const { user, token } = useStorage();
   const location = useLocation();
 
   const navigation = [
@@ -22,9 +22,12 @@ const Navbar = () => {
       ? location.pathname === "/"
       : location.pathname.startsWith(href);
 
-  const handleLogout = () => {
-    setIsOpen(false);
-    setUser({ fullName: "Halo" });
+  const { logout, loading } = useLogout();
+
+  const handleLogout = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    await logout();
   };
 
   return (
@@ -50,7 +53,7 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            {user.fullName ? (
+            {user.fullName && token ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-700 flex items-center">
                   <User className="w-4 h-4 mr-1" />
@@ -58,10 +61,11 @@ const Navbar = () => {
                 </span>
                 <button
                   onClick={handleLogout}
+                  disabled={loading}
                   className="px-3 py-1 text-sm border border-[#3E9C5A] text-[#3E9C5A] rounded-md hover:bg-[#3E9C5A] hover:text-white transition"
                 >
                   <LogOut className="w-4 h-4 inline-block mr-1" />
-                  Logout
+                  {loading ? "Processs..." : "Logout"}
                 </button>
               </div>
             ) : (

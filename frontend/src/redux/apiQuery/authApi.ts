@@ -8,10 +8,13 @@ import type {
 import {
   saveCurrentJwtToken,
   saveCurrentCsrfToken,
+  removeCurrentCsrfToken,
+  removeCurrentJwtToken,
 } from "redux/slice/authSlice";
-import { saveUserState } from "redux/slice/userSlice";
+import { removeUserState, saveUserState } from "redux/slice/userSlice";
 import { jwtDecode } from "jwt-decode";
 import { API_QUERY_PATH } from "constant/ApiQueryPath";
+import type { BaseApiResponseTypes } from "types/BaseApiResponse";
 
 export const authAPI = createApi({
   reducerPath: "AuthAPI",
@@ -25,31 +28,52 @@ export const authAPI = createApi({
         body: credentials,
       }),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
+        const { data } = await queryFulfilled;
 
-          console.log(data);
+        const decoded = jwtDecode<JwtPayload>(data.responseObject.token);
+        const userId = decoded.id;
+        const fullName = decoded.fullName;
+        const roleAlias = decoded.rl;
 
-          const decoded = jwtDecode<JwtPayload>(data.responseObject.token);
-          const userId = decoded.id;
-          const fullName = decoded.fullName;
-          const roleAlias = decoded.rl;
+        dispatch(
+          saveUserState({
+            _id: userId,
+            fullName,
+            rl: roleAlias,
+          })
+        );
+        dispatch(saveCurrentJwtToken(data.responseObject.token));
+        dispatch(saveCurrentCsrfToken(data.responseObject.cft));
+      },
+    }),
+    logout: builder.mutation<BaseApiResponseTypes, void>({
+      query: (credentials) => {
+        const token = localStorage.getItem("persist:root")
+          ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")!).auth)
+              .token
+          : null;
+        return {
+          url: API_QUERY_PATH.logout,
+          method: "POST",
+          body: credentials,
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        };
+      },
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        const { data } = await queryFulfilled;
 
-          dispatch(
-            saveUserState({
-              _id: userId,
-              fullName,
-              rl: roleAlias,
-            })
-          );
-          dispatch(saveCurrentJwtToken(data.responseObject.token));
-          dispatch(saveCurrentCsrfToken(data.responseObject.cft));
-        } catch (error) {
-          console.error("Token Failed", error);
+        if (!data.success) {
+          throw new Error(data.message);
         }
+
+        dispatch(removeCurrentCsrfToken());
+        dispatch(removeCurrentJwtToken());
+        dispatch(removeUserState());
       },
     }),
   }),
 });
 
-export const { useLoginMutation } = authAPI;
+export const { useLoginMutation, useLogoutMutation } = authAPI;
