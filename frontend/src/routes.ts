@@ -17,6 +17,15 @@ export const createRouter = () =>
             return { Component: HomePage };
           },
         },
+        {
+          path: "menu",
+          lazy: async () => {
+            const { default: MenuPage } = await import(
+              "modules/user/pages/MenuPage"
+            );
+            return { Component: MenuPage };
+          },
+        },
       ],
     },
   ]);

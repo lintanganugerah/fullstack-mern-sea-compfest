@@ -1,0 +1,48 @@
+export const mealPlans = [
+  {
+    _id: "meal-001",
+    name: "Protein Boost Plan",
+    price: 75000,
+    description: "High-protein meals ideal for muscle gain and recovery.",
+    image: "https://placehold.co/600x400",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "meal-002",
+    name: "Slim Fit Plan",
+    price: 68000,
+    description: "Low-calorie, nutrient-dense meals to support weight loss.",
+    image: "https://placehold.co/600x400",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "meal-003",
+    name: "Balanced Lifestyle Plan",
+    price: 82000,
+    description:
+      "A mix of proteins, carbs, and healthy fats for daily wellness.",
+    image: "https://placehold.co/600x400",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "meal-004",
+    name: "Royal Indulgence Plan",
+    price: 99000,
+    description: "Premium curated meals with the finest organic ingredients.",
+    image: "https://placehold.co/600x400",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    _id: "meal-005",
+    name: "Vegetarian Wellness Plan",
+    price: 70000,
+    description: "Wholesome plant-based meals rich in fiber and antioxidants.",
+    image: "https://placehold.co/600x400",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
