@@ -8,6 +8,8 @@ export const TestimoniSchemaZod = z.object({
   rating: z.number().int().max(5).min(1),
 });
 
-export const CreateTestimoniSchemaZod = z.object({
-  body: TestimoniSchemaZod,
+//Name dan user id ambil dari jwt token yang valid
+export const CreateTestimoniSchemaZod = TestimoniSchemaZod.omit({
+  userId: true,
+  name: true,
 });
