@@ -50,7 +50,8 @@ const HomePage = () => {
               <Link to="/menu">
                 <Button
                   size="lg"
-                  className="bg-accent hover:bg-accent/90 text-white font-semibold px-8 py-3"
+                  variant="accent"
+                  className="text-white font-semibold px-8 py-3"
                 >
                   Explore Our Menu
                 </Button>
@@ -137,7 +138,7 @@ const HomePage = () => {
             {features.map((feature, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6 text-center">
-                  <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="bg-primary/10 mt-4 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <feature.icon className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold mb-3 text-gray-800">
@@ -179,7 +180,8 @@ const HomePage = () => {
                 <Link to="/contact">
                   <Button
                     size="lg"
-                    className="bg-accent hover:bg-accent/90 text-white font-semibold px-8 py-3"
+                    variant="accent"
+                    className="font-semibold px-8 py-3"
                   >
                     Contact Us Now
                   </Button>
