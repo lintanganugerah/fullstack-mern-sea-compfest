@@ -1,3 +1,4 @@
+import { aliasName } from "@/common/utils/aliasName";
 import z from "zod";
 
 export const LoginSchemaZod = z.object({
@@ -30,4 +31,8 @@ export const LoginResponseSchemaZod = z.object({
 
 export const RegisterResponseSchemaZod = z.object({
   message: z.string(),
+});
+
+export const CsrfResponseSchemaZod = z.object({
+  [aliasName["csrf_token"]]: z.string(),
 });

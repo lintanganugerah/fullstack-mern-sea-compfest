@@ -8,6 +8,7 @@ import z from "zod";
 import * as AuthController from "./controller/auth.controller";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import {
+  CsrfResponseSchemaZod,
   LoginResponseSchemaZod,
   LoginSchemaZod,
   RegisterResponseSchemaZod,
@@ -33,7 +34,7 @@ authRegistry.register(
 );
 authRegistry.register("ServiceResponse<Login>", LoginResponseSchemaZod);
 
-// POST /api/v1/register (User Only)
+// POST /api/v1/auth/register (User Only)
 authRegistry.registerPath({
   method: "post",
   path: "/register",
@@ -55,7 +56,7 @@ authRouter.post(
   AuthController.registerUser
 );
 
-// POST /api/v1/register/admin (Admin Only)
+// POST /api/v1/auth/register/admin (Admin Only)
 authRegistry.registerPath({
   method: "post",
   path: "/register/admin",
@@ -79,7 +80,7 @@ authRouter.post(
   AuthController.createAdmin
 );
 
-// POST /api/v1/login
+// POST /api/v1/auth/login
 authRegistry.registerPath({
   method: "post",
   path: "/login",
@@ -100,3 +101,16 @@ authRouter.post(
   validateRequest(LoginSchemaZod),
   AuthController.login
 );
+
+// GET /api/v1/auth/csf
+authRegistry.registerPath({
+  method: "get",
+  path: "/csf",
+  tags: ["Auth"],
+  responses: createApiResponse(
+    ServiceResponseSchema(CsrfResponseSchemaZod),
+    "Login Success"
+  ),
+});
+
+authRouter.get("/csf", requireAuth, AuthController.refreshCsrf);

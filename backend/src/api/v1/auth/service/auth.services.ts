@@ -5,6 +5,7 @@ import { Response } from "express";
 import { RegisterInput, LoginInput } from "../types/auth.types";
 import { getEnv } from "@/common/config/envConfig";
 import { aliasName } from "@/common/utils/aliasName";
+import crypto, { createHmac } from "crypto";
 
 export class AuthServices {
   constructor(private readonly repo: AuthMongoRepo) {}
@@ -45,6 +46,6 @@ export class AuthServices {
   }
 
   async logoutUser(res: Response) {
-    res.clearCookie("access_token");
+    res.clearCookie(aliasName["access_token"]);
   }
 }

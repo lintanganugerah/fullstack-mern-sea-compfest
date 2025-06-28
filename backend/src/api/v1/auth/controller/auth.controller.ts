@@ -2,6 +2,9 @@ import { ServiceResponse } from "@/common/utils/serviceResponse";
 import { Request, RequestHandler, Response } from "express";
 import { createAuthService } from "../service/auth.factory";
 import { respond } from "@/common/utils/responseHandler";
+import { aliasName } from "@/common/utils/aliasName";
+import { getEnv } from "@/common/config/envConfig";
+import { generateRawCsrfToken, signCsrfToken } from "@/common/utils/csrfUtils";
 
 const authService = createAuthService();
 
@@ -20,12 +23,6 @@ export const registerUser: RequestHandler = async (
   if (existing) {
     respond(res, ServiceResponse.failure("Email already registered"));
     return;
-  }
-
-  let role = "user";
-
-  if (req.isAdmin) {
-    role = "admin";
   }
 
   const payload = {
@@ -85,5 +82,49 @@ export const login: RequestHandler = async (req: Request, res: Response) => {
     respond(res, ServiceResponse.failure(result.message, null, 401));
     return;
   }
-  respond(res, ServiceResponse.success("Login successful", result.token));
+
+  // Double Submit Token
+  const csrfToken = generateRawCsrfToken();
+  const signedToken = signCsrfToken(csrfToken);
+  res.cookie(aliasName["csrf_token_signed"], signedToken, {
+    httpOnly: true,
+    secure: getEnv().isProduction,
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 15, // 15 menit
+  });
+
+  respond(
+    res,
+    ServiceResponse.success("Login success", {
+      [aliasName["csrf_token"]]: csrfToken,
+      token: result.token,
+    })
+  );
+};
+
+export const logout: RequestHandler = async (_: Request, res: Response) => {
+  res.clearCookie(aliasName["access_token"]);
+  respond(res, ServiceResponse.success("Logout success"));
+};
+
+export const refreshCsrf: RequestHandler = async (
+  _: Request,
+  res: Response
+) => {
+  // Double Submit Token
+  const csrfToken = generateRawCsrfToken();
+  const signedToken = signCsrfToken(csrfToken);
+  res.cookie(aliasName["csrf_token_signed"], signedToken, {
+    httpOnly: true,
+    secure: getEnv().isProduction,
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 15, // 15 menit
+  });
+
+  respond(
+    res,
+    ServiceResponse.success("Login success", {
+      [aliasName["csrf_token"]]: csrfToken,
+    })
+  );
 };
