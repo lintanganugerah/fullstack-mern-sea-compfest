@@ -4,12 +4,14 @@ import storage from "redux-persist/lib/storage";
 import userReducer from "redux/slice/userSlice";
 import authReducer from "redux/slice/authSlice";
 import { authAPI } from "redux/apiQuery/authApi";
+import { testimonialAPI } from "redux/apiQuery/testimonialApi";
 
 // Gabung semua reducer
 const rootReducer = combineReducers({
   user: userReducer,
   auth: authReducer,
   [authAPI.reducerPath]: authAPI.reducer,
+  [testimonialAPI.reducerPath]: testimonialAPI.reducer,
 });
 
 // Configure redux-persist
@@ -27,7 +29,9 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false, //Ini required dari redux-persist
-    }).concat(authAPI.middleware),
+    })
+      .concat(authAPI.middleware)
+      .concat(testimonialAPI.middleware),
 });
 
 export const persistor = persistStore(store);

@@ -5,6 +5,7 @@ const initialState = {
   _id: "",
   fullName: "",
   rl: "",
+  mealPlan: [],
 };
 
 const userSlice = createSlice({

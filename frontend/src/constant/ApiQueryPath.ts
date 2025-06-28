@@ -6,4 +6,8 @@ export const API_QUERY_PATH = {
     verifyAuth: "/auth/verify",
     verifyAdmin: "/auth/verify/admin",
   },
+  testimoni: {
+    get: "/testimoni",
+    create: "/testimoni",
+  },
 };

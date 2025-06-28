@@ -1,15 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TestimonialCarousel from "modules/user/components/ui/TestimonialCarousel";
 import TestimonialForm from "modules/user/components/ui/TestimonialForm";
 import type { Testimonial } from "../types/TestimonialTypes";
-import { testimonialsMock } from "../mock/TestimonialMock";
 import { Card, CardHeader, CardTitle, CardContent } from "components/ui/Card";
+import { useTestimonialsFetch } from "hooks/useTestimonialFetch";
 
 export default function TestimonialsPage() {
-  const [testimonials, setTestimonials] =
-    useState<Testimonial[]>(testimonialsMock);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const { data: testimonialData, isLoading } = useTestimonialsFetch({
+    type: "all",
+  });
+
+  useEffect(() => {
+    if (Array.isArray(testimonialData)) {
+      setTestimonials(testimonialData);
+    }
+  }, [testimonialData]);
+
+  //TODO: Ini create testimonial baru
   const handleAddTestimonial = (testimonial: Testimonial) => {
     setTestimonials((prev) => [testimonial, ...prev]);
   };
@@ -41,6 +51,7 @@ export default function TestimonialsPage() {
         currentIndex={currentIndex}
         onPrev={prevTestimonial}
         onNext={nextTestimonial}
+        isLoading={isLoading}
       />
 
       <div className="max-w-2xl mx-auto">

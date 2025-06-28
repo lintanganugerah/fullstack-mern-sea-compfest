@@ -1,7 +1,13 @@
-export type Testimonial = {
-  id: string;
-  name: string;
-  message: string;
-  rating: number;
-  date: string;
+import type { BaseApiResponseTypes } from "types/BaseApiResponse";
+import z from "zod";
+import type { TestimoniSchemaZod } from "../zod/testimoniSchema";
+
+export type Testimonial = z.infer<typeof TestimoniSchemaZod>;
+
+export type TestimonialResponseAll = BaseApiResponseTypes & {
+  responseObject: Testimonial[];
+};
+
+export type TestimonialResponseOne = BaseApiResponseTypes & {
+  responseObject: Testimonial;
 };

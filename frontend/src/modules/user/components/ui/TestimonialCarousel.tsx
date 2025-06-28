@@ -6,6 +6,7 @@ import type { Testimonial } from "modules/user/types/TestimonialTypes";
 interface TestimonialCarouselProps {
   testimonials: Testimonial[];
   currentIndex: number;
+  isLoading: boolean;
   onPrev: () => void;
   onNext: () => void;
 }
@@ -13,6 +14,7 @@ interface TestimonialCarouselProps {
 const TestimonialCarousel = ({
   testimonials,
   currentIndex,
+  isLoading,
   onPrev,
   onNext,
 }: TestimonialCarouselProps) => {
@@ -55,17 +57,21 @@ const TestimonialCarousel = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {visibleTestimonials().map((testimonial) => (
-          <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-        ))}
-      </div>
-
-      {testimonials.length === 0 && (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">Loading testimonials...</p>
+        </div>
+      ) : testimonials.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500">
             No testimonials yet. Be the first to share your experience!
           </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {visibleTestimonials().map((testimonial) => (
+            <TestimonialCard key={testimonial._id} testimonial={testimonial} />
+          ))}
         </div>
       )}
     </div>
