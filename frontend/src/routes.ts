@@ -26,6 +26,15 @@ export const createRouter = () =>
             return { Component: MenuPage };
           },
         },
+        {
+          path: "testimonials",
+          lazy: async () => {
+            const { default: TestimonialPage } = await import(
+              "modules/user/pages/TestimonialPage"
+            );
+            return { Component: TestimonialPage };
+          },
+        },
       ],
     },
   ]);
