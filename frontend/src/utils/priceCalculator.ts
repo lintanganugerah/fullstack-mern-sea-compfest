@@ -1,29 +1,30 @@
-export interface PlanPricing {
-  Diet: number;
-  Protein: number;
-  Royal: number;
-}
+import type { MealPlan } from "modules/user/types/MealPlanTypes";
+import type {
+  MealType,
+  DeliveryDay,
+} from "modules/user/types/SubscriptionTypes";
 
-//TODO: Hapusi ni nanti, cuman sebagai dummy
-export const PLAN_PRICES: PlanPricing = {
-  Diet: 30000,
-  Protein: 40000,
-  Royal: 60000,
-};
-
-export const calculateSubscriptionPrice = (
-  planType: keyof PlanPricing,
-  mealTypes: string[],
-  deliveryDays: string[]
+export const calculateTotalSubscription = (
+  selectedMealPlan: MealPlan | null,
+  selectedMealTypes: MealType[],
+  selectedDeliveryDays: DeliveryDay[]
 ): number => {
-  const planPrice = PLAN_PRICES[planType];
-  const mealTypeCount = mealTypes.length;
-  const deliveryDayCount = deliveryDays.length;
+  if (
+    !selectedMealPlan ||
+    selectedMealTypes.length === 0 ||
+    selectedDeliveryDays.length === 0
+  ) {
+    return 0;
+  }
+
+  const pricePerMeal = selectedMealPlan.price;
+  const mealTypeCount = selectedMealTypes.length;
+  const deliveryDayCount = selectedDeliveryDays.length;
   const weeksInMonth = 4.3;
 
-  return Math.round(
-    planPrice * mealTypeCount * deliveryDayCount * weeksInMonth
-  );
+  const total = pricePerMeal * mealTypeCount * deliveryDayCount * weeksInMonth;
+
+  return Math.round(total);
 };
 
 export const formatPrice = (price: number): string => {

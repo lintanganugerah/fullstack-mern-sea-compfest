@@ -44,6 +44,15 @@ export const createRouter = () =>
             return { Component: ContactPage };
           },
         },
+        {
+          path: "subscription",
+          lazy: async () => {
+            const { default: SubscriptionPage } = await import(
+              "modules/user/pages/SubscriptionPage"
+            );
+            return { Component: SubscriptionPage };
+          },
+        },
       ],
     },
   ]);
