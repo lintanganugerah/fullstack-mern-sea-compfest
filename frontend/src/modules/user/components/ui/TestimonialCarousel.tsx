@@ -7,6 +7,7 @@ interface TestimonialCarouselProps {
   testimonials: Testimonial[];
   currentIndex: number;
   isLoading: boolean;
+  isError: boolean;
   onPrev: () => void;
   onNext: () => void;
 }
@@ -15,6 +16,7 @@ const TestimonialCarousel = ({
   testimonials,
   currentIndex,
   isLoading,
+  isError,
   onPrev,
   onNext,
 }: TestimonialCarouselProps) => {
@@ -64,7 +66,9 @@ const TestimonialCarousel = ({
       ) : testimonials.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500">
-            No testimonials yet. Be the first to share your experience!
+            {isError
+              ? "Server Down. Cannot get testimonials data"
+              : "No testimonials yet. Be the first to share your experience!"}
           </p>
         </div>
       ) : (

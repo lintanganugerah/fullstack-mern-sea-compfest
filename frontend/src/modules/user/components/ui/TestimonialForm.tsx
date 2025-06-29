@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { Button } from "components/ui/Button";
-import type { Testimonial } from "modules/user/types/TestimonialTypes";
+import type { CreateTestimonial } from "modules/user/types/TestimonialTypes";
 import { toast } from "react-toastify";
 import { Bounce } from "react-toastify";
+import { CreateTestimoniSchemaZod } from "modules/user/zod/testimoniSchema";
 
 interface Props {
-  onSubmit: (testimonial: Testimonial) => void;
+  userFullName: string;
+  onSubmit: (testimonial: CreateTestimonial) => void;
 }
 
-export default function TestimonialForm({ onSubmit }: Props) {
+export default function TestimonialForm({ onSubmit, userFullName }: Props) {
   const [formData, setFormData] = useState({
-    name: "",
     message: "",
     rating: "",
   });
@@ -18,16 +19,28 @@ export default function TestimonialForm({ onSubmit }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+    const shapedData = shapeTestimonialData(formData);
+    const result = CreateTestimoniSchemaZod.safeParse(shapedData);
+    console.log(result);
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          fieldErrors[err.path[0]] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
 
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.message.trim()) newErrors.message = "Review is required";
-    else if (formData.message.length < 10)
-      newErrors.message = "Minimum 10 characters";
-    if (!formData.rating) newErrors.rating = "Rating is required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const shapeTestimonialData = (data: typeof formData): CreateTestimonial => {
+    return {
+      message: data.message,
+      rating: parseInt(data.rating),
+    };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,27 +63,9 @@ export default function TestimonialForm({ onSubmit }: Props) {
     setIsSubmitting(true);
     await new Promise((res) => setTimeout(res, 1000));
 
-    const newTestimonial: Testimonial = {
-      id: Date.now().toString(),
-      name: formData.name,
-      message: formData.message,
-      rating: parseInt(formData.rating),
-      date: new Date().toISOString().split("T")[0],
-    };
-
+    const newTestimonial = shapeTestimonialData(formData);
     onSubmit(newTestimonial);
-    toast.success("Thank you for your review!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-    });
-    setFormData({ name: "", message: "", rating: "" });
+    setFormData({ message: "", rating: "" });
     setIsSubmitting(false);
   };
 
@@ -86,16 +81,13 @@ export default function TestimonialForm({ onSubmit }: Props) {
         <input
           id="name"
           type="text"
-          value={formData.name}
-          onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
-          placeholder="Enter your full name"
-          className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
-            errors.name ? "border-red-500" : "border-gray-300"
-          }`}
+          value={userFullName ?? ""}
+          disabled
+          className="w-full px-4 py-2 border rounded-md bg-gray-100 text-gray-500 cursor-not-allowed"
         />
-        {errors.name && (
-          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-        )}
+        <span className="text-xs font-light text-gray-400">
+          Fullname are derived from your account registration name
+        </span>
       </div>
 
       <div>
@@ -114,6 +106,7 @@ export default function TestimonialForm({ onSubmit }: Props) {
           className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
             errors.rating ? "border-red-500" : "border-gray-300"
           }`}
+          required={true}
         >
           <option value="" disabled>
             Select your rating
@@ -147,6 +140,7 @@ export default function TestimonialForm({ onSubmit }: Props) {
           className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none ${
             errors.message ? "border-red-500" : "border-gray-300"
           }`}
+          required={true}
         ></textarea>
         {errors.message && (
           <p className="text-red-500 text-sm mt-1">{errors.message}</p>

@@ -28,16 +28,6 @@ export const getTestimoniById = async (req: Request, res: Response) => {
 
 export const createTestimoni = async (req: Request, res: Response) => {
   const body = req.body;
-  const mealPlanExist = await mealplanService.getMealById(req.body.mealPlanId);
-  console.log(`${JSON.stringify(req.body)}`);
-  console.log(`meal plan : ${mealPlanExist}`);
-  if (!mealPlanExist) {
-    respond(
-      res,
-      ServiceResponse.failure("Meal Plan not found", undefined, 404)
-    );
-    return;
-  }
   if (!req.user) {
     respond(
       res,

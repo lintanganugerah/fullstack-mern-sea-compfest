@@ -1,6 +1,6 @@
 import type { BaseApiResponseTypes } from "types/BaseApiResponse";
 import z from "zod";
-import type { TestimoniSchemaZod } from "../zod/testimoniSchema";
+import type { CreateTestimoniSchemaZod, TestimoniSchemaZod } from "../zod/testimoniSchema";
 
 export type Testimonial = z.infer<typeof TestimoniSchemaZod>;
 
@@ -11,3 +11,5 @@ export type TestimonialResponseAll = BaseApiResponseTypes & {
 export type TestimonialResponseOne = BaseApiResponseTypes & {
   responseObject: Testimonial;
 };
+
+export type CreateTestimonial = z.infer<typeof CreateTestimoniSchemaZod>

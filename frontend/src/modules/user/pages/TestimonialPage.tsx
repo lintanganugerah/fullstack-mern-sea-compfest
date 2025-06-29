@@ -1,27 +1,46 @@
 import { useEffect, useState } from "react";
 import TestimonialCarousel from "modules/user/components/ui/TestimonialCarousel";
 import TestimonialForm from "modules/user/components/ui/TestimonialForm";
-import type { Testimonial } from "../types/TestimonialTypes";
+import type { CreateTestimonial } from "../types/TestimonialTypes";
 import { Card, CardHeader, CardTitle, CardContent } from "components/ui/Card";
-import { useTestimonialsFetch } from "hooks/useTestimonialFetch";
+import { useFetchAllTestimonials } from "hooks/useFetchAllTestimonials";
+import { useAuthCheck } from "hooks/useAuthCheck";
+import { toast } from "react-toastify";
+import { useStorage } from "hooks/useStorage";
 
 export default function TestimonialsPage() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const { isAuthenticated } = useAuthCheck("user");
+  const { user } = useStorage();
 
-  const { data: testimonialData, isLoading } = useTestimonialsFetch({
-    type: "all",
-  });
+  const {
+    data: testimonials,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchAllTestimonials();
 
   useEffect(() => {
-    if (Array.isArray(testimonialData)) {
-      setTestimonials(testimonialData);
+    if (isError) {
+      toast.error("Sorry, Server is down");
     }
-  }, [testimonialData]);
+  }, [isError, refetch]);
+
+  const handleWriteReviewButton = () => {
+    if (!isAuthenticated) {
+      toast.error("You must be logged in to submit a review.");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 3000);
+      return;
+    }
+    setShowFormModal(true);
+  };
 
   //TODO: Ini create testimonial baru
-  const handleAddTestimonial = (testimonial: Testimonial) => {
-    setTestimonials((prev) => [testimonial, ...prev]);
+  const handleAddTestimonial = (testimonial: CreateTestimonial) => {
+    console.log(testimonial);
   };
 
   const nextTestimonial = () => {
@@ -52,23 +71,57 @@ export default function TestimonialsPage() {
         onPrev={prevTestimonial}
         onNext={nextTestimonial}
         isLoading={isLoading}
+        isError={isError}
       />
 
-      <div className="max-w-2xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl font-poppins text-primary text-center">
-              Share Your Experience
-            </CardTitle>
-            <p className="text-center text-gray-600">
-              We'd love to hear about your journey with Sea Catering's meal
-              delivery service
-            </p>
-          </CardHeader>
-          <CardContent>
-            <TestimonialForm onSubmit={handleAddTestimonial} />
-          </CardContent>
-        </Card>
+      {showFormModal && isAuthenticated && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center  px-4"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="relative w-full max-w-lg max-h-[90vh] bg-white rounded-lg shadow-xl overflow-y-auto">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl"
+              onClick={() => setShowFormModal(false)}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+
+            <div className="p-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl font-poppins text-primary text-center">
+                    Share Your Experience
+                  </CardTitle>
+                  <p className="text-center text-gray-600">
+                    We'd love to hear about your journey with Sea Catering's
+                    meal delivery service
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <TestimonialForm
+                    onSubmit={(testimonial) => {
+                      handleAddTestimonial(testimonial);
+                      setShowFormModal(false);
+                    }}
+                    userFullName={user.fullName}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="text-center mt-8">
+        <button
+          onClick={handleWriteReviewButton}
+          className="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200"
+        >
+          Write a Review
+        </button>
       </div>
 
       <div className="mt-16 bg-primary/5 rounded-2xl p-8">

@@ -5,11 +5,6 @@ export const TestimoniSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     name: { type: String, required: true },
-    mealPlanId: {
-      type: Schema.Types.ObjectId,
-      ref: "MealPlan",
-      required: true,
-    },
     rating: {
       type: Number,
       required: true,
