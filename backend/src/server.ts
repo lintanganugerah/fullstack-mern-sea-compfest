@@ -6,6 +6,7 @@ import requestLogger from "@/common/middleware/requestLogger";
 import IndexRoute from "./api/index.routes";
 import errorHandlers from "./common/middleware/errorHandlers";
 import cookieParser from "cookie-parser";
+import { applyLimiter } from "./common/middleware/rateLimiter";
 
 const app: Express = express();
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: getEnv().CORS_ORIGIN, credentials: true }));
 app.use(helmet());
 app.use(cookieParser());
+app.use(applyLimiter("commonLimiter"));
 
 app.use(requestLogger);
 app.use(IndexRoute);
