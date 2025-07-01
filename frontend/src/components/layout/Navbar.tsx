@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, User, LogOut } from "lucide-react";
 import { useStorage } from "hooks/useStorage";
-import { useLogout } from "hooks/useLogout";
+import { useLogout } from "hooks/auth/useLogout";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthCheck } from "hooks/useAuthCheck";
+import { useAuthCheck } from "hooks/auth/useAuthCheck";
 import { toast } from "react-toastify";
 
 export default function RequireAuth() {

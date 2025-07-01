@@ -5,18 +5,18 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 
-import { useStorage } from "./useStorage";
+import { useStorage } from "../useStorage";
 import {
   useLazyVerifyAdminQuery,
   useLazyVerifyAuthQuery,
-} from "../redux/apiQuery/authApi";
+} from "redux/apiQuery/authApi";
 import {
   removeCurrentCsrfToken,
   removeCurrentJwtToken,
-} from "../redux/slice/authSlice";
+} from "redux/slice/authSlice";
 
 import { removeUserState } from "redux/slice/userSlice";
-import { aliasName } from "../utils/aliasName";
+import { aliasName } from "utils/aliasName";
 
 export function useAuthCheck(role: "user" | "admin" = "user") {
   const { token } = useStorage();

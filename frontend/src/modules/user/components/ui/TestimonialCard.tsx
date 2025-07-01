@@ -14,7 +14,6 @@ export default function TestimonialCard({ testimonial }: Props) {
             <span key={i}>⭐</span>
           ))}
         </div>
-        <p className="text-sm text-gray-500">{testimonial.date}</p>
       </div>
       <div className="mt-4">
         <p className="font-semibold text-gray-800">- {testimonial.name}</p>

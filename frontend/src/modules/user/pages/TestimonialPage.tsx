@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TestimonialCarousel from "modules/user/components/ui/TestimonialCarousel";
 import TestimonialForm from "modules/user/components/ui/TestimonialForm";
 import type { CreateTestimonial } from "../types/TestimonialTypes";
 import { Card, CardHeader, CardTitle, CardContent } from "components/ui/Card";
-import { useFetchAllTestimonials } from "hooks/useFetchAllTestimonials";
-import { useAuthCheck } from "hooks/useAuthCheck";
+import { useAuthCheck } from "hooks/auth/useAuthCheck";
 import { toast } from "react-toastify";
 import { useStorage } from "hooks/useStorage";
+import { useAllTestimonial } from "hooks/testimonial/useTestimonial";
+import { useCreateTestimonial } from "hooks/testimonial/useCreateTestimonial";
 
 export default function TestimonialsPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -14,18 +15,9 @@ export default function TestimonialsPage() {
   const { isAuthenticated } = useAuthCheck("user");
   const { user } = useStorage();
 
-  const {
-    data: testimonials,
-    isLoading,
-    isError,
-    refetch,
-  } = useFetchAllTestimonials();
-
-  useEffect(() => {
-    if (isError) {
-      toast.error("Sorry, Server is down");
-    }
-  }, [isError, refetch]);
+  const { data: testimonials, isLoading, isError } = useAllTestimonial();
+  const { createTestimoni, isLoading: isLoadingCreate } =
+    useCreateTestimonial();
 
   const handleWriteReviewButton = () => {
     if (!isAuthenticated) {
@@ -38,9 +30,8 @@ export default function TestimonialsPage() {
     setShowFormModal(true);
   };
 
-  //TODO: Ini create testimonial baru
-  const handleAddTestimonial = (testimonial: CreateTestimonial) => {
-    console.log(testimonial);
+  const handleAddTestimonial = async (testimonial: CreateTestimonial) => {
+    await createTestimoni(testimonial).then(() => setShowFormModal(false));
   };
 
   const nextTestimonial = () => {
@@ -104,9 +95,9 @@ export default function TestimonialsPage() {
                   <TestimonialForm
                     onSubmit={(testimonial) => {
                       handleAddTestimonial(testimonial);
-                      setShowFormModal(false);
                     }}
                     userFullName={user.fullName}
+                    isSubmitting={isLoadingCreate}
                   />
                 </CardContent>
               </Card>

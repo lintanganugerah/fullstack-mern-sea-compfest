@@ -1,5 +1,4 @@
 import { useRegisterMutation } from "redux/apiQuery/authApi";
-import { useState } from "react";
 import { toast } from "react-toastify";
 import type {
   RegisterFormData,
@@ -7,28 +6,24 @@ import type {
 } from "modules/auth/types/registerTypes";
 
 export function useRegister() {
-  const [registerTrigger] = useRegisterMutation();
-  const [loading, setLoading] = useState(false);
+  const [registerTrigger, { isLoading: loading }] = useRegisterMutation();
 
   const register = (formData: RegisterFormData) => {
-    setLoading(true);
     return registerTrigger(formData)
       .unwrap()
       .then(() => {
-        toast.success("register success.");
+        toast.success("Register success.");
       })
       .catch((err) => {
         const message =
           (err?.data as RegisterResponse)?.message ||
           err?.error ||
-          "register failed. Please try again.";
+          "Register failed. Please try again.";
         if (err?.statusCode >= 500) {
           toast.error("Internal Server Error");
+        } else {
+          toast.error(message);
         }
-        toast.error(message);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 

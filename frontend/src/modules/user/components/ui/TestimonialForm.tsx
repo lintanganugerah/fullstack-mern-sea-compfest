@@ -8,15 +8,19 @@ import { CreateTestimoniSchemaZod } from "modules/user/zod/testimoniSchema";
 interface Props {
   userFullName: string;
   onSubmit: (testimonial: CreateTestimonial) => void;
+  isSubmitting: boolean;
 }
 
-export default function TestimonialForm({ onSubmit, userFullName }: Props) {
+export default function TestimonialForm({
+  onSubmit,
+  userFullName,
+  isSubmitting,
+}: Props) {
   const [formData, setFormData] = useState({
     message: "",
     rating: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     const shapedData = shapeTestimonialData(formData);
@@ -60,13 +64,11 @@ export default function TestimonialForm({ onSubmit, userFullName }: Props) {
       return;
     }
 
-    setIsSubmitting(true);
     await new Promise((res) => setTimeout(res, 1000));
 
     const newTestimonial = shapeTestimonialData(formData);
     onSubmit(newTestimonial);
     setFormData({ message: "", rating: "" });
-    setIsSubmitting(false);
   };
 
   return (

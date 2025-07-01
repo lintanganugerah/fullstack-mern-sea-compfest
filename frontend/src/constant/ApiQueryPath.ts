@@ -5,6 +5,7 @@ export const API_QUERY_PATH = {
     register: "/auth/register",
     verifyAuth: "/auth/verify",
     verifyAdmin: "/auth/verify/admin",
+    refreshCsrf: "/auth/csf",
   },
   testimoni: {
     get: "/testimoni",

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 import { registerSchemaZod } from "../zod/registerSchemaZod";
 import type { RegisterFormData } from "../types/registerTypes";
-import { useRegister } from "hooks/useRegister";
+import { useRegister } from "hooks/auth/useRegister";
 
 const RegisterPage = () => {
   const navigate = useNavigate();

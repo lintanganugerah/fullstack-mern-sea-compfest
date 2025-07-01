@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 import { loginSchemaZod } from "../zod/loginSchemaZod";
 import type { LoginFormData } from "../types/loginTypes";
-import { useLogin } from "hooks/useLogin";
+import { useLogin } from "hooks/auth/useLogin";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState<LoginFormData>({

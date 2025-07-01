@@ -1,15 +1,12 @@
 import { useLoginMutation } from "redux/apiQuery/authApi";
-import { useState } from "react";
 import { toast } from "react-toastify";
 import type { LoginFormData } from "modules/auth/types/loginTypes";
 import type { BaseApiResponseTypes } from "types/BaseApiResponse";
 
 export function useLogin() {
-  const [loginTrigger] = useLoginMutation();
-  const [loading, setLoading] = useState(false);
+  const [loginTrigger, { isLoading: loading }] = useLoginMutation();
 
   const login = (formData: LoginFormData) => {
-    setLoading(true);
     return loginTrigger(formData)
       .unwrap()
       .then(() => {
@@ -24,9 +21,6 @@ export function useLogin() {
           toast.error("Internal Server Error");
         }
         toast.error(message);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 

@@ -1,4 +1,4 @@
-import { BASE_QUERY_REDUX } from "constant/ApiBaseURI";
+import { BASE_QUERY_REAUTH } from "constant/ApiBaseURI";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type {
   JwtPayload,
@@ -19,12 +19,15 @@ import type {
   RegisterFormData,
   RegisterResponse,
 } from "modules/auth/types/registerTypes";
-import type { verifyAuthResponse } from "modules/auth/types/authTypes";
+import type {
+  csrfTokenRefreshResponse,
+  verifyAuthResponse,
+} from "modules/auth/types/authTypes";
 
 export const authAPI = createApi({
   reducerPath: "AuthAPI",
-  baseQuery: BASE_QUERY_REDUX,
-  tagTypes: ["Auth"],
+  baseQuery: BASE_QUERY_REAUTH,
+  tagTypes: ["Auth", "AuthAdmin"],
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginFormData>({
       query: (credentials) => ({
@@ -32,6 +35,7 @@ export const authAPI = createApi({
         method: "POST",
         body: credentials,
       }),
+      invalidatesTags: ["Auth"],
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         const { data } = await queryFulfilled;
 
@@ -52,19 +56,11 @@ export const authAPI = createApi({
       },
     }),
     logout: builder.mutation<BaseApiResponseTypes, void>({
-      query: () => {
-        const token = localStorage.getItem("persist:root")
-          ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")!).auth)
-              .token
-          : null;
-        return {
-          url: API_QUERY_PATH.auth.logout,
-          method: "POST",
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        };
-      },
+      query: () => ({
+        url: API_QUERY_PATH.auth.logout,
+        method: "POST",
+      }),
+      invalidatesTags: ["Auth", "AuthAdmin"],
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         const { data } = await queryFulfilled;
 
@@ -91,19 +87,11 @@ export const authAPI = createApi({
       },
     }),
     verifyAuth: builder.query<verifyAuthResponse, void>({
-      query: () => {
-        const token = localStorage.getItem("persist:root")
-          ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")!).auth)
-              .token
-          : null;
-        return {
-          url: API_QUERY_PATH.auth.verifyAuth,
-          method: "POST",
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        };
-      },
+      query: () => ({
+        url: API_QUERY_PATH.auth.verifyAuth,
+        method: "POST",
+        providesTags: ["Auth"],
+      }),
       async onQueryStarted(_, { queryFulfilled }) {
         const { data } = await queryFulfilled;
         if (!data.success) {
@@ -112,24 +100,25 @@ export const authAPI = createApi({
       },
     }),
     verifyAdmin: builder.query<verifyAuthResponse, void>({
-      query: () => {
-        const token = localStorage.getItem("persist:root")
-          ? JSON.parse(JSON.parse(localStorage.getItem("persist:root")!).auth)
-              .token
-          : null;
-        return {
-          url: API_QUERY_PATH.auth.verifyAdmin,
-          method: "POST",
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        };
-      },
-      async onQueryStarted(_, { queryFulfilled }) {
+      query: () => ({
+        url: API_QUERY_PATH.auth.verifyAdmin,
+        method: "POST",
+        providedTags: ["AuthAdmin"],
+      }),
+    }),
+    refreshCsrfToken: builder.query<csrfTokenRefreshResponse, void>({
+      query: () => ({
+        url: API_QUERY_PATH.auth.refreshCsrf,
+        method: "GET",
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         const { data } = await queryFulfilled;
+
         if (!data.success) {
           throw new Error(data.message);
         }
+
+        dispatch(saveCurrentCsrfToken(data.responseObject.cft));
       },
     }),
   }),
@@ -141,4 +130,8 @@ export const {
   useRegisterMutation,
   useLazyVerifyAdminQuery,
   useLazyVerifyAuthQuery,
+  useVerifyAdminQuery,
+  useVerifyAuthQuery,
+  useRefreshCsrfTokenQuery,
+  useLazyRefreshCsrfTokenQuery,
 } = authAPI;
