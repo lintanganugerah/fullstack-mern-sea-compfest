@@ -34,7 +34,7 @@ const MealPlanCard = ({ plan, onViewDetails }: MealPlanCardProps) => {
 
       {plan.image && (
         <img
-          src={plan.image}
+          src={plan.image ?? "images_placeholder.png"}
           alt={plan.name}
           className="w-full h-48 object-cover rounded-lg mx-auto px-4 mt-2"
         />

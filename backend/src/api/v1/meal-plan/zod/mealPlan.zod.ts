@@ -7,16 +7,9 @@ export const MealPlanSchema = z.object({
   image: z.string().url().optional(),
 });
 
-export const CreateMealSchema = z.object({
-  body: MealPlanSchema,
-});
+export const CreateMealSchema = MealPlanSchema;
 
-export const UpdateMealSchema = z.object({
-  body: MealPlanSchema.partial(),
-  params: z.object({
-    id: z.string().min(1),
-  }),
-});
+export const UpdateMealSchema = MealPlanSchema.partial();
 
 export const GetMealParamsSchema = z.object({
   params: z.object({

@@ -61,7 +61,6 @@ mealRegistry.registerPath({
   path: "/mealplan/{id}",
   tags: ["MealPlan"],
   request: {
-    params: UpdateMealSchema.shape.params,
     body: {
       content: { "application/json": { schema: MealPlanSchema.partial() } },
     },
