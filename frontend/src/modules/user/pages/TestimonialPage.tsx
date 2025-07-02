@@ -15,7 +15,12 @@ export default function TestimonialsPage() {
   const { isAuthenticated } = useAuthCheck("user");
   const { user } = useStorage();
 
-  const { data: testimonials, isLoading, isError } = useAllTestimonial();
+  const {
+    data: testimonials,
+    isLoading,
+    isError,
+    refetch,
+  } = useAllTestimonial();
   const { createTestimoni, isLoading: isLoadingCreate } =
     useCreateTestimonial();
 
@@ -31,7 +36,10 @@ export default function TestimonialsPage() {
   };
 
   const handleAddTestimonial = async (testimonial: CreateTestimonial) => {
-    await createTestimoni(testimonial).then(() => setShowFormModal(false));
+    await createTestimoni(testimonial).then(() => {
+      setShowFormModal(false);
+      refetch();
+    });
   };
 
   const nextTestimonial = () => {
