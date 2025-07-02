@@ -10,5 +10,13 @@ export const API_QUERY_PATH = {
   testimoni: {
     get: "/testimoni",
     create: "/testimoni",
+    getDetail: (id: string) => `/testimoni/${id}`,
+  },
+  mealplan: {
+    get: "/mealplan",
+    create: "/mealplan",
+    getDetail: (id: string) => `/mealplan/${id}`,
+    edit: (id: string) => `/mealplan/${id}`,
+    delete: (id: string) => `/mealplan/${id}`,
   },
 };

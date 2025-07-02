@@ -5,6 +5,7 @@ import userReducer from "redux/slice/userSlice";
 import authReducer from "redux/slice/authSlice";
 import { authAPI } from "redux/apiQuery/authApi";
 import { testimonialAPI } from "redux/apiQuery/testimonialApi";
+import { MealplanApi } from "./apiQuery/mealplanApi";
 
 // Gabung semua reducer
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   [authAPI.reducerPath]: authAPI.reducer,
   [testimonialAPI.reducerPath]: testimonialAPI.reducer,
+  [MealplanApi.reducerPath]: MealplanApi.reducer,
 });
 
 // Configure redux-persist
@@ -31,7 +33,8 @@ const store = configureStore({
       serializableCheck: false, //Ini required dari redux-persist
     })
       .concat(authAPI.middleware)
-      .concat(testimonialAPI.middleware),
+      .concat(testimonialAPI.middleware)
+      .concat(MealplanApi.middleware),
 });
 
 export const persistor = persistStore(store);

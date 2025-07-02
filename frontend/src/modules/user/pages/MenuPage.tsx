@@ -4,10 +4,13 @@ import MealPlanCard from "../components/ui/MealPlanCard";
 import type { MealPlan } from "../types/MealPlanTypes";
 import { mealPlans } from "../mock/MealPlanMock";
 import { Link } from "react-router-dom";
+import { useGetAllMealplanQuery } from "redux/apiQuery/mealplanApi";
 
 export default function MenuPage() {
   const [selectedPlan, setSelectedPlan] = useState<MealPlan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data: mealPlans, isLoading, isError } = useGetAllMealplanQuery();
 
   const handleViewDetails = (plan: MealPlan) => {
     setSelectedPlan(plan);
@@ -33,15 +36,23 @@ export default function MenuPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mealPlans.map((plan) => (
-            <MealPlanCard
-              key={plan._id}
-              plan={plan}
-              onViewDetails={handleViewDetails}
-            />
-          ))}
-        </div>
+        {isError ? (
+          <div className="flex items-center justify-center">
+            Error, can't get data
+          </div>
+        ) : isLoading ? (
+          <div className="flex items-center justify-center">Loading...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {mealPlans?.responseObject?.map((plan) => (
+              <MealPlanCard
+                key={plan._id}
+                plan={plan}
+                onViewDetails={handleViewDetails}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="mt-16 bg-primary/5 rounded-2xl p-8 md:p-12">
           <div className="text-center">
