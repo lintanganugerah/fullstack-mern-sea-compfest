@@ -14,8 +14,9 @@ import {
 } from "./zod/mealPlan.zod";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { validateRequest } from "@/common/utils/httpValidate";
-// import { requireAdmin } from "@/common/middleware/auth.middleware";
 import { ServiceResponseSchema } from "@/common/utils/serviceResponse";
+import { requireAdmin } from "@/common/middleware/requireAdmin";
+import { requireAuth } from "@/common/middleware/requireAuth";
 
 extendZodWithOpenApi(z);
 
@@ -48,6 +49,8 @@ mealRegistry.registerPath({
 });
 mealRouter.post(
   "/",
+  requireAuth,
+  requireAdmin,
   validateRequest(CreateMealSchema),
   MealController.postMeal
 );
@@ -58,7 +61,6 @@ mealRegistry.registerPath({
   path: "/mealplan/{id}",
   tags: ["MealPlan"],
   request: {
-    params: UpdateMealSchema.shape.params,
     body: {
       content: { "application/json": { schema: MealPlanSchema.partial() } },
     },
@@ -70,6 +72,8 @@ mealRegistry.registerPath({
 });
 mealRouter.put(
   "/:id",
+  requireAuth,
+  requireAdmin,
   validateRequest(UpdateMealSchema),
   MealController.putMeal
 );
@@ -86,6 +90,8 @@ mealRegistry.registerPath({
 });
 mealRouter.delete(
   "/:id",
+  requireAuth,
+  requireAdmin,
   validateRequest(GetMealParamsSchema),
   MealController.deleteMeal as RequestHandler
 );

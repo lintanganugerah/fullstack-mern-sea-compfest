@@ -27,20 +27,19 @@ export const getTestimoniById = async (req: Request, res: Response) => {
 };
 
 export const createTestimoni = async (req: Request, res: Response) => {
-  //TODO: Add User id and user Name here if Auth endpoint/middleware done
-  const mealPlanExist = await mealplanService.getMealById(req.body.mealPlanId);
-  console.log(`${JSON.stringify(req.body)}`);
-  console.log(`meal plan : ${mealPlanExist}`);
-  if (!mealPlanExist) {
+  const body = req.body;
+  if (!req.user) {
     respond(
       res,
-      ServiceResponse.failure("Meal Plan not found", undefined, 404)
+      ServiceResponse.failure("Unauthorized: Missing user data", undefined, 401)
     );
     return;
   }
+
   const payload = {
-    message: req.body.message,
-    mealPlanId: req.body.mealPlanId,
+    ...body,
+    userId: req.user.id,
+    name: req.user.fullName,
   };
 
   const dataCreated = await testimoniService.createTestimoni(payload);

@@ -11,6 +11,9 @@ const envSchema = z.object({
   COMMON_RATE_LIMIT_MAX: z.coerce.number().int().positive().default(1000),
   COMMON_RATE_LIMIT_MS: z.coerce.number().int().positive().default(1000),
   MONGO_URI: z.string().min(1),
+  JWT_SECRET: z.string().min(10),
+  CSRF_SECRET: z.string().min(10),
+  COOKIES_SECRET: z.string().min(10),
 });
 
 type Env = z.infer<typeof envSchema> & {

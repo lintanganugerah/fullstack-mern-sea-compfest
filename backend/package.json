@@ -8,13 +8,16 @@
     "build": "tsc",
     "start:prod": "node dist/main.js",
     "test": "vitest run",
-    "test:cov": "vitest run --coverage"
+    "test:cov": "vitest run --coverage",
+    "setupAdmin": "tsx src/common/scripts/setup_admin.ts",
+    "refreshEnv": "tsx src/common/scripts/refresh_env.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.3.4",
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -34,8 +37,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.5",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.0.4",
     "@types/p-retry": "^3.0.0",

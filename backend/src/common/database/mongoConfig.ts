@@ -19,6 +19,9 @@ export const connectDB = async (): Promise<void> => {
       databaseLogger.warn(
         `⚠️ MongoDB connection attempt ${error.attemptNumber} failed. ${error.retriesLeft} retries left.`
       );
+      databaseLogger.error(
+        `Error message: ${error.message}`
+      );
     },
   });
 

@@ -13,6 +13,8 @@ import {
 } from "./zod/subs.zod";
 import { ServiceResponseSchema } from "@/common/utils/serviceResponse";
 import { validateRequest } from "@/common/utils/httpValidate";
+import { requireAuth } from "@/common/middleware/requireAuth";
+import { requireCsrfToken } from "@/common/middleware/requireCsrfToken";
 
 extendZodWithOpenApi(z);
 
@@ -56,8 +58,8 @@ subsRouter.get("/:id", SubsController.getSubsById);
 
 subsRegistry.registerPath({
   method: "post",
-  path: "/testimoni",
-  tags: ["Testimoni"],
+  path: "/subs",
+  tags: ["Subscription"],
   request: {
     body: {
       content: { "application/json": { schema: CreateSubscriptionSchemaZod } },
@@ -65,11 +67,13 @@ subsRegistry.registerPath({
   },
   responses: createApiResponse(
     ServiceResponseSchema(CreateSubscriptionSchemaZod),
-    "Meal created"
+    "Subscription created"
   ),
 });
 subsRouter.post(
   "/",
+  requireAuth,
+  requireCsrfToken,
   validateRequest(subscriptionSchemaZod),
   SubsController.createSubs
 );
