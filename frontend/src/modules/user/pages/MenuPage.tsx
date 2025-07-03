@@ -2,7 +2,6 @@ import { useState } from "react";
 import MealPlanModal from "../components/ui/MealPlanModal";
 import MealPlanCard from "../components/ui/MealPlanCard";
 import type { MealPlan } from "../types/MealPlanTypes";
-import { mealPlans } from "../mock/MealPlanMock";
 import { Link } from "react-router-dom";
 import { useGetAllMealplanQuery } from "redux/apiQuery/mealplanApi";
 

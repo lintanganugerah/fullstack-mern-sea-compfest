@@ -19,4 +19,9 @@ export const API_QUERY_PATH = {
     edit: (id: string) => `/mealplan/${id}`,
     delete: (id: string) => `/mealplan/${id}`,
   },
+  subscription: {
+    get: "/subs",
+    create: "/subs",
+    getDetail: (id: string) => `/mealplan/${id}`,
+  },
 };

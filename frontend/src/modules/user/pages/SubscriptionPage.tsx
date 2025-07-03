@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { calculateTotalSubscription, formatPrice } from "utils/priceCalculator";
+import { calculateTotalSubscription } from "utils/priceCalculator";
 import SubscriptionForm from "../components/ui/SubscriptionForm";
 import PriceSummary from "../components/ui/PriceSummary";
-import { mealPlans } from "../mock/MealPlanMock";
-import type { SubscriptionFormData } from "../types/SubscriptionTypes";
+import type { CreateSubscription } from "../types/SubscriptionTypes";
 import { subscriptionSchema } from "../zod/subscriptionSchema";
 import { ZodError } from "zod";
+import { useGetAllMealplanQuery } from "redux/apiQuery/mealplanApi";
+import { useCreateSubsMutation } from "redux/apiQuery/subscriptionApi";
 
 export default function SubscriptionPage() {
   const deliveryDays = [
@@ -19,9 +20,12 @@ export default function SubscriptionPage() {
     "sunday",
   ];
 
+  const { data: mealPlans, isLoading, isError } = useGetAllMealplanQuery();
+  const [triggerCreate] = useCreateSubsMutation();
+
   const mealTypes = ["breakfast", "lunch", "dinner"];
 
-  const [formData, setFormData] = useState<SubscriptionFormData>({
+  const [formData, setFormData] = useState<CreateSubscription>({
     name: "",
     phoneNumber: "",
     mealPlanId: "",
@@ -36,7 +40,8 @@ export default function SubscriptionPage() {
 
   useEffect(() => {
     const selectedMealPlan =
-      mealPlans.find((m) => m._id === formData.mealPlanId) ?? null;
+      mealPlans?.responseObject.find((m) => m._id === formData.mealPlanId) ??
+      null;
 
     const total = calculateTotalSubscription(
       selectedMealPlan,
@@ -45,7 +50,20 @@ export default function SubscriptionPage() {
     );
 
     setTotalPrice(total);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.mealPlanId, formData.mealTypes, formData.deliveryDays]);
+
+  useEffect(() => {
+    if (isLoading) {
+      setIsSubmitting(true);
+    } else {
+      setIsSubmitting(false);
+    }
+
+    if (isError) {
+      toast.error("Create Subscription failed, please try again later");
+    }
+  }, [isLoading, isError]);
 
   const validateForm = () => {
     try {
@@ -72,24 +90,23 @@ export default function SubscriptionPage() {
     }
 
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1000));
-
-    toast.success(
-      `Subscription created successfully. Total: ${formatPrice(
-        totalPrice
-      )} / month`
-    );
-    console.log("Submitted:", { ...formData, totalPrice });
-
-    setFormData({
-      name: "",
-      phoneNumber: "",
-      mealPlanId: "",
-      mealTypes: [],
-      deliveryDays: [],
-      allergies: "",
-    });
-    setIsSubmitting(false);
+    triggerCreate(formData)
+      .then(() => {
+        setIsSubmitting(false);
+        toast.success(`Subscription created successfully`);
+        setFormData({
+          name: "",
+          phoneNumber: "",
+          mealPlanId: "",
+          mealTypes: [],
+          deliveryDays: [],
+          allergies: "",
+        });
+      })
+      .catch((e) => {
+        toast.error(`Error Occured: ${e}`);
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -102,7 +119,7 @@ export default function SubscriptionPage() {
           <SubscriptionForm
             formData={formData}
             setFormData={setFormData}
-            mealPlans={mealPlans}
+            mealPlans={mealPlans?.responseObject}
             mealTypes={mealTypes}
             deliveryDays={deliveryDays}
             handleSubmit={handleSubmit}

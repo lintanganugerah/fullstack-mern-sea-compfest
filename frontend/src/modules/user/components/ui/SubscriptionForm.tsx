@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { MealPlan } from "modules/user/types/MealPlanTypes";
-import type { SubscriptionFormData } from "modules/user/types/SubscriptionTypes";
+import type {
+  CreateSubscription,
+  SubscriptionFormData,
+  MealType,
+  DeliveryDay,
+} from "modules/user/types/SubscriptionTypes";
+import { useStorage } from "hooks/useStorage";
 
 interface Props {
   formData: SubscriptionFormData;
-  setFormData: React.Dispatch<React.SetStateAction<SubscriptionFormData>>;
-  mealPlans: MealPlan[];
-  mealTypes: string[];
-  deliveryDays: string[];
+  setFormData: React.Dispatch<React.SetStateAction<CreateSubscription>>;
+  mealPlans: MealPlan[] | undefined;
+  mealTypes: MealType[];
+  deliveryDays: DeliveryDay[];
   handleSubmit: (e: React.FormEvent) => void;
   isSubmitting: boolean;
   errors: Record<string, string>;
@@ -23,6 +29,10 @@ const SubscriptionForm: React.FC<Props> = ({
   isSubmitting,
   errors,
 }) => {
+  const { user } = useStorage();
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, name: user.fullName }));
+  }, [user]);
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Name & Phone */}
@@ -38,6 +48,7 @@ const SubscriptionForm: React.FC<Props> = ({
           className={`w-full border p-2 rounded ${
             errors.name ? "border-red-500" : ""
           }`}
+          required={true}
         />
         {errors.name && (
           <p className="text-sm text-red-500 mt-1">{errors.name}</p>
@@ -53,6 +64,9 @@ const SubscriptionForm: React.FC<Props> = ({
           className={`w-full border p-2 rounded mt-4 ${
             errors.phoneNumber ? "border-red-500" : ""
           }`}
+          max={15}
+          min={10}
+          required={true}
         />
         {errors.phoneNumber && (
           <p className="text-sm text-red-500 mt-1">{errors.phoneNumber}</p>
@@ -62,7 +76,7 @@ const SubscriptionForm: React.FC<Props> = ({
       {/* Meal Plan */}
       <div className="bg-white p-4 rounded shadow-md">
         <h2 className="text-xl font-semibold mb-4">Meal Plan</h2>
-        {mealPlans.map((meal) => (
+        {mealPlans?.map((meal) => (
           <div
             key={meal._id}
             className="flex items-center border gap-2 p-2 my-2 rounded"
@@ -74,6 +88,7 @@ const SubscriptionForm: React.FC<Props> = ({
               onChange={() =>
                 setFormData((prev) => ({ ...prev, mealPlanId: meal._id }))
               }
+              className={`${errors.mealPlan ? "border-red-500" : ""}`}
             />
             <div>
               <div className="font-medium">{meal.name}</div>
@@ -107,6 +122,7 @@ const SubscriptionForm: React.FC<Props> = ({
                     : prev.mealTypes.filter((t) => t !== type),
                 }))
               }
+              className={`${errors.mealTypes ? "border-red-500" : ""}`}
             />
             <span>{type}</span>
           </label>
@@ -135,6 +151,7 @@ const SubscriptionForm: React.FC<Props> = ({
                     : prev.deliveryDays.filter((d) => d !== day),
                 }))
               }
+              className={`${errors.deliveryDays ? "border-red-500" : ""}`}
             />
             <span>{day}</span>
           </label>
