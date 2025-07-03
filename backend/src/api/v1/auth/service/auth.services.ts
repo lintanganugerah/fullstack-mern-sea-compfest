@@ -24,9 +24,7 @@ export class AuthServices {
     return user ? true : false;
   }
 
-  async loginUser(
-    input: LoginInput
-  ): Promise<{
+  async loginUser(input: LoginInput): Promise<{
     success: boolean;
     message: string;
     token?: string;
